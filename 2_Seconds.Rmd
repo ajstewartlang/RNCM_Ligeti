@@ -1,0 +1,366 @@
+---
+title: "2 seconds"
+author: "Andrew Stewart"
+date: "18/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# This first analysis looks only at music training as a predictor of clicking or not clicking during each of the 21 segments
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(readxl)
+```
+
+```{r}
+raw_data <- read_excel("raw_data.xlsx") 
+```
+
+```{r}
+joined_data <- read_csv("music_training_plus2s.csv") 
+
+# look at each segment
+# segment 1
+model_seg1 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg1",], family = "binomial")
+summary(model_seg1)
+
+# segment 2
+model_seg2 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg2",], family = "binomial")
+summary(model_seg2)
+
+# segment 3
+model_seg3 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg3",], family = "binomial")
+summary(model_seg3)
+
+# segment 4
+model_seg4 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg14",], family = "binomial")
+summary(model_seg4)
+
+# segment 5
+model_seg5 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg5",], family = "binomial")
+summary(model_seg5)
+
+# segment 6
+model_seg6 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg6",], family = "binomial")
+summary(model_seg6)
+
+# segment 7
+model_seg7 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg7",], family = "binomial")
+summary(model_seg7)
+
+# segment 8
+model_seg8 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg8",], family = "binomial")
+summary(model_seg8)
+
+# segment 9
+model_seg9 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg9",], family = "binomial")
+summary(model_seg9)
+
+# segment 10
+model_seg10 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg10",], family = "binomial")
+summary(model_seg10)
+
+# segment 11
+model_seg11 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg11",], family = "binomial")
+summary(model_seg11)
+
+# segment 12 - p = .0753
+model_seg12 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg12",], family = "binomial")
+summary(model_seg12)
+
+# segment 13
+model_seg13 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg13",], family = "binomial")
+summary(model_seg13)
+
+# segment 14
+model_seg14 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg14",], family = "binomial")
+summary(model_seg14)
+
+# segment 15
+model_seg15 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg15",], family = "binomial")
+summary(model_seg15)
+
+# segment 16 - p = .0358
+model_seg16 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg16",], family = "binomial")
+summary(model_seg16)
+
+# segment 17
+model_seg17 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg17",], family = "binomial")
+summary(model_seg17)
+
+# segment 18
+model_seg18 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg18",], family = "binomial")
+summary(model_seg18)
+
+# segment 19
+model_seg19 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg19",], family = "binomial")
+summary(model_seg19)
+
+# segment 20
+model_seg20 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg20",], family = "binomial")
+summary(model_seg20)
+
+# segment 21
+model_seg21 <- glm(press ~ music_training, data = joined_data[joined_data$seg == "Seg21",], family = "binomial")
+summary(model_seg21)
+
+joined_data %>%
+  group_by(seg, press) %>%
+  count() %>%
+  filter(press == 1) %>%
+  ungroup() %>%
+  add_row(seg = "Seg1", press = 1, n = 0) %>%
+  add_row(seg = "Seg2", press = 1, n = 0) %>%
+  add_row(seg = "Seg4", press = 1, n = 0) %>%
+  add_row(seg = "Seg17", press = 1, n = 0) %>%
+  mutate(seg, seg = factor(seg, levels = c("Seg1", "Seg2", "Seg3", "Seg4", "Seg5", "Seg6", "Seg7", "Seg8", "Seg9",
+                                      "Seg10", "Seg11", "Seg12", "Seg13", "Seg14", "Seg15", "Seg16", "Seg17",
+                                      "Seg18", "Seg19", "Seg20", "Seg21"))) %>%
+  ggplot(aes(x = seg, y = n)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(text = element_text(size = 15)) +
+  labs(title = "Clicks per segment",
+       x = "Segment Number", 
+       y = "Number of Clicks")
+```
+
+# This second analysis looks only at maths training as a predictor of clicking or not clicking during each of the 21 segments
+
+```{r}
+joined_data <- read_csv("maths_training_plus2s.csv") 
+
+# look at each segment
+# segment 1
+model_seg1 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg1",], family = "binomial")
+summary(model_seg1)
+
+# segment 2
+model_seg2 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg2",], family = "binomial")
+summary(model_seg2)
+
+# segment 3
+model_seg3 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg3",], family = "binomial")
+summary(model_seg3)
+
+# segment 4
+model_seg4 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg14",], family = "binomial")
+summary(model_seg4)
+
+# segment 5
+model_seg5 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg5",], family = "binomial")
+summary(model_seg5)
+
+# segment 6
+model_seg6 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg6",], family = "binomial")
+summary(model_seg6)
+
+# segment 7
+model_seg7 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg7",], family = "binomial")
+summary(model_seg7)
+
+# segment 8
+model_seg8 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg8",], family = "binomial")
+summary(model_seg8)
+
+# segment 9
+model_seg9 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg9",], family = "binomial")
+summary(model_seg9)
+
+# segment 10
+model_seg10 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg10",], family = "binomial")
+summary(model_seg10)
+
+# segment 11
+model_seg11 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg11",], family = "binomial")
+summary(model_seg11)
+
+# segment 12 - p = .0753
+model_seg12 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg12",], family = "binomial")
+summary(model_seg12)
+
+# segment 13
+model_seg13 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg13",], family = "binomial")
+summary(model_seg13)
+
+# segment 14
+model_seg14 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg14",], family = "binomial")
+summary(model_seg14)
+
+# segment 15
+model_seg15 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg15",], family = "binomial")
+summary(model_seg15)
+
+# segment 16 - p = .0358
+model_seg16 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg16",], family = "binomial")
+summary(model_seg16)
+
+# segment 17
+model_seg17 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg17",], family = "binomial")
+summary(model_seg17)
+
+# segment 18
+model_seg18 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg18",], family = "binomial")
+summary(model_seg18)
+
+# segment 19
+model_seg19 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg19",], family = "binomial")
+summary(model_seg19)
+
+# segment 20
+model_seg20 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg20",], family = "binomial")
+summary(model_seg20)
+
+# segment 21
+model_seg21 <- glm(press ~ maths_training, data = joined_data[joined_data$seg == "Seg21",], family = "binomial")
+summary(model_seg21)
+
+joined_data %>%
+  group_by(seg, press) %>%
+  count() %>%
+  filter(press == 1) %>%
+  ungroup() %>%
+  add_row(seg = "Seg1", press = 1, n = 0) %>%
+  add_row(seg = "Seg2", press = 1, n = 0) %>%
+  add_row(seg = "Seg4", press = 1, n = 0) %>%
+  add_row(seg = "Seg17", press = 1, n = 0) %>%
+  mutate(seg, seg = factor(seg, levels = c("Seg1", "Seg2", "Seg3", "Seg4", "Seg5", "Seg6", "Seg7", "Seg8", "Seg9",
+                                           "Seg10", "Seg11", "Seg12", "Seg13", "Seg14", "Seg15", "Seg16", "Seg17",
+                                           "Seg18", "Seg19", "Seg20", "Seg21"))) %>%
+  ggplot(aes(x = seg, y = n)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(text = element_text(size = 15)) +
+  labs(title = "Clicks per segment",
+       x = "Segment Number", 
+       y = "Number of Clicks")
+```
+
+# Model looking at both music and maths training as predictors
+
+```{r, message=FALSE, warning=FALSE}
+library(car)
+```
+
+```{r, message = FALSE}
+maths <- read_csv("maths_training_plus2s.csv")
+music <- read_csv("music_training_plus2s.csv")
+
+music_math <- left_join(maths, music, by = c("ID", "seg"))
+```
+
+```{r}
+# look at each segment
+# segment 1
+model_seg1 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg1",], family = "binomial")
+summary(model_seg1)
+vif(model_seg1)
+
+# segment 2
+model_seg2 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg2",], family = "binomial")
+summary(model_seg2)
+vif(model_seg2)
+
+# segment 3
+model_seg3 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg3",], family = "binomial")
+summary(model_seg3)
+vif(model_seg3)
+
+# segment 4
+model_seg4 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg14",], family = "binomial")
+summary(model_seg4)
+vif(model_seg4)
+
+# segment 5
+model_seg5 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg5",], family = "binomial")
+summary(model_seg5)
+vif(model_seg5)
+
+# segment 6
+model_seg6 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg6",], family = "binomial")
+summary(model_seg6)
+vif(model_seg6)
+
+# segment 7
+model_seg7 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg7",], family = "binomial")
+summary(model_seg7)
+vif(model_seg7)
+
+# segment 8
+model_seg8 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg8",], family = "binomial")
+summary(model_seg8)
+vif(model_seg8)
+
+# segment 9
+model_seg9 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg9",], family = "binomial")
+summary(model_seg9)
+vif(model_seg9)
+
+# segment 10
+model_seg10 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg10",], family = "binomial")
+summary(model_seg10)
+vif(model_seg10)
+
+# segment 11
+model_seg11 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg11",], family = "binomial")
+summary(model_seg11)
+vif(model_seg11)
+
+# segment 12 - p = .00279
+model_seg12 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg12",], family = "binomial")
+summary(model_seg12)
+vif(model_seg12)
+
+# segment 13
+model_seg13 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg13",], family = "binomial")
+summary(model_seg13)
+vif(model_seg13)
+
+# segment 14
+model_seg14 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg14",], family = "binomial")
+summary(model_seg14)
+vif(model_seg14)
+
+# segment 15
+model_seg15 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg15",], family = "binomial")
+summary(model_seg15)
+vif(model_seg15)
+
+# segment 16 
+model_seg16 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg16",], family = "binomial")
+summary(model_seg16)
+vif(model_seg16)
+
+# segment 17
+model_seg17 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg17",], family = "binomial")
+summary(model_seg17)
+vif(model_seg17)
+
+# segment 18
+model_seg18 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg18",], family = "binomial")
+summary(model_seg18)
+vif(model_seg18)
+
+# segment 19
+model_seg19 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg19",], family = "binomial")
+summary(model_seg19)
+vif(model_seg19)
+
+# segment 20
+model_seg20 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg20",], family = "binomial")
+summary(model_seg20)
+vif(model_seg20)
+
+# segment 21
+model_seg21 <- glm(press.x ~ maths_training + music_training, data = music_math[music_math$seg == "Seg21",], family = "binomial")
+summary(model_seg21)
+vif(model_seg21)
+```
+
