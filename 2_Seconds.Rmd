@@ -18,11 +18,10 @@ library(readxl)
 ```
 
 ```{r}
-raw_data <- read_excel("raw_data.xlsx") 
+joined_data <- read_csv("music_training_plus2s.csv") 
 ```
 
 ```{r}
-joined_data <- read_csv("music_training_plus2s.csv") 
 
 # look at each segment
 # segment 1
