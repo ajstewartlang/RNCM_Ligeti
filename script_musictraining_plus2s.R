@@ -5,14 +5,14 @@ library(readxl)
 raw_data <- read_excel("raw_data.xlsx") 
 
 raw_data <- raw_data %>% 
-  select(randomId, musicTraining, c("...37":"...58")) 
+  select(randomId, musicTraining, post_familiar, c("...37":"...58")) 
 
 names_list <- NULL
 for (i in 1:21) {
   names_list <- c(names_list, paste0("point_",i))
 }
 
-colnames(raw_data) <- c("ID", "music_training", "start", names_list)
+colnames(raw_data) <- c("ID", "music_training", "post_familiar", "start", names_list)
 
 # exclude anyone where we don't have their music training score
 raw_data <- raw_data %>%
@@ -51,6 +51,39 @@ tidy_data_filtered %>%
 
 tidy_data$music_training <- as.integer(tidy_data$music_training)
 tidy_data_filtered$music_training <- as.integer(tidy_data_filtered$music_training)
+
+# rename post_familiar as unfamiliar if 1,2,3 and familiar if 5,6,7
+tidy_data_filtered %>%
+  filter(!is.na(post_familiar)) %>%
+  mutate(post_familiar = as.integer(post_familiar)) %>%
+  mutate(post_familiar = as_factor(ifelse(post_familiar < 4, "not_familiar", "familiar"))) %>%
+  filter(time < 213) %>%
+  filter(post_familiar == "not_familiar") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram(bins = 213) +
+  labs(title = "Button presses throughout the duration of the piece\nfor people not familiar with contemporary music",
+       x = "Time (s)", 
+       y = "Number of presses") +
+  theme_minimal() +
+  theme(text = element_text(size = 15)) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_y_continuous(expand = c(0, 0)) 
+
+tidy_data_filtered %>%
+  filter(!is.na(post_familiar)) %>%
+  mutate(post_familiar = as.integer(post_familiar)) %>%
+  mutate(post_familiar = as_factor(ifelse(post_familiar < 4, "not_familiar", "familiar"))) %>%
+  filter(time < 213) %>%
+  filter(post_familiar == "familiar") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram(bins = 213) +
+  labs(title = "Button presses throughout the duration of the piece\nfor people familiar with contemporary music",
+       x = "Time (s)", 
+       y = "Number of presses") +
+  theme_minimal() +
+  theme(text = element_text(size = 15)) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_y_continuous(expand = c(0, 0)) 
 
 tidy_data_filtered %>%
   mutate(time = as.integer(value)/1000) %>%
