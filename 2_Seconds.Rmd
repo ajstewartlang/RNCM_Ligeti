@@ -21,6 +21,8 @@ library(readxl)
 joined_data <- read_csv("music_training_plus2s.csv") 
 ```
 
+
+
 ```{r}
 
 # look at each segment

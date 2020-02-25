@@ -16,7 +16,7 @@ colnames(raw_data) <- c("ID", "maths_training", "start", names_list)
 
 # exclude anyone where we don't have their maths training score
 raw_data <- raw_data %>%
-  mutate(maths_training = recode(maths_training, "10+" = "10")) %>%
+  mutate(maths_training = recode(maths_training, "10+" = "11")) %>%
   filter(!is.na(maths_training))
 
 tidy_data <- raw_data %>% 

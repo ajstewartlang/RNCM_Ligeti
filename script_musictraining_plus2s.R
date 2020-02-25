@@ -16,7 +16,7 @@ colnames(raw_data) <- c("ID", "music_training", "start", names_list)
 
 # exclude anyone where we don't have their music training score
 raw_data <- raw_data %>%
-  mutate(music_training = recode(music_training, "10+" = "10")) %>%
+  mutate(music_training = recode(music_training, "10+" = "11")) %>%
   filter(!is.na(music_training))
 
 tidy_data <- raw_data %>% 
@@ -38,8 +38,9 @@ tidy_data_filtered <- tidy_data %>%
 
 # Plot histogram 
 tidy_data_filtered %>%
+  filter(time < 213) %>%
   ggplot(aes(x = time)) +
-  geom_histogram(bins = 200) +
+  geom_histogram(bins = 213) +
   labs(title = "Number of button presses throughout the duration of the piece",
        x = "Time (s)", 
        y = "Number of presses") +
@@ -139,6 +140,15 @@ joined_data[is.na(joined_data$press),]$press <- 0
 joined_data$music_training <- as.integer(joined_data$music_training)
 
 write_csv(joined_data, "music_training_plus2s.csv")
+
+# Descriptives
+tidy_data_filtered %>%
+  filter(seg != 0) %>%
+  group_by(seg) %>%
+  tally(press) %>%
+  arrange(-n) %>%
+  top_n(10)
+  
 
 # look at each segment
 # segment 1
