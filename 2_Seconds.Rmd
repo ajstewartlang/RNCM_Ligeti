@@ -18,7 +18,7 @@ library(readxl)
 ```
 
 ```{r}
-joined_data <- read_csv("music_training_plus2s.csv") 
+joined_data <- read_csv("tidied_data/music_training_plus2s.csv") 
 ```
 
 
@@ -135,7 +135,7 @@ joined_data %>%
 # This second analysis looks only at maths training as a predictor of clicking or not clicking during each of the 21 segments
 
 ```{r}
-joined_data <- read_csv("maths_training_plus2s.csv") 
+joined_data <- read_csv("tidied_data/maths_training_plus2s.csv") 
 
 # look at each segment
 # segment 1

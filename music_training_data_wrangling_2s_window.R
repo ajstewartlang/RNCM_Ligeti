@@ -2,7 +2,7 @@ library(tidyverse)
 library(janitor)
 library(readxl)
 
-raw_data <- read_excel("raw_data.xlsx") 
+raw_data <- read_excel("raw_data/raw_data.xlsx") 
 
 raw_data <- raw_data %>% 
   select(randomId, musicTraining, c("...37":"...58")) 
@@ -16,7 +16,7 @@ colnames(raw_data) <- c("ID", "music_training", "start", names_list)
 
 # exclude anyone where we don't have their music training score
 raw_data <- raw_data %>%
-  mutate(music_training = recode(music_training, "10+" = "10")) %>%
+  mutate(music_training = recode(music_training, "10+" = "11")) %>%
   filter(!is.na(music_training))
 
 tidy_data <- raw_data %>% 
@@ -138,4 +138,4 @@ joined_data <- left_join(my_df, select(tidy_data_filtered,
 joined_data[is.na(joined_data$press),]$press <- 0
 joined_data$music_training <- as.integer(joined_data$music_training)
 
-write_csv(joined_data, "music_training_plus2s.csv")
+write_csv(joined_data, "tidied_data/music_training_plus2s.csv")
