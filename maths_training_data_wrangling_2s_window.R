@@ -2,7 +2,7 @@ library(tidyverse)
 library(janitor)
 library(readxl)
 
-raw_data <- read_excel("raw_data.xlsx") 
+raw_data <- read_excel("raw_data/raw_data.xlsx") 
 
 raw_data <- raw_data %>% 
   select(randomId, mathTraining, c("...37":"...58")) 
@@ -138,4 +138,4 @@ joined_data <- left_join(my_df, select(tidy_data_filtered,
 joined_data[is.na(joined_data$press),]$press <- 0
 joined_data$maths_training <- as.integer(joined_data$maths_training)
 
-write_csv(joined_data, "maths_training_plus2s.csv")
+write_csv(joined_data, "tidied_data/maths_training_plus2s.csv")
