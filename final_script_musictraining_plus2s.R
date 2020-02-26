@@ -13,10 +13,9 @@ for (i in 1:21) {
 
 colnames(raw_data) <- c("ID", "music_training", "post_familiar", "start", names_list)
 
-# exclude anyone where we don't have their music training score
+# recode 10+ as 11
 raw_data <- raw_data %>%
-  mutate(music_training = recode(music_training, "10+" = "11")) %>%
-  filter(!is.na(music_training))
+  mutate(music_training = recode(music_training, "10+" = "11"))
 
 tidy_data <- raw_data %>% 
   repair_names() %>% 
@@ -95,6 +94,16 @@ tidy_data_filtered %>%
   scale_x_continuous(expand = c(0, 0)) + 
   scale_y_continuous(expand = c(0, 0)) 
 
+# Top tap points
+tidy_data_filtered %>%
+  filter(!is.na(post_familiar)) %>%
+  mutate(post_familiar = as.integer(post_familiar)) %>%
+  mutate(post_familiar = as_factor(ifelse(post_familiar < 4, "not_familiar", "familiar"))) %>%
+  filter(time < 213) %>%
+  group_by(time, post_familiar) %>%
+  tally() %>%
+  arrange(- n)
+
 # create long data frame based on 9 segments
 ID <- unique(tidy_data_filtered$ID)
 
@@ -153,7 +162,7 @@ joined_data <- left_join(my_df, select(tidy_data_filtered,
 joined_data[is.na(joined_data$press),]$press <- 0
 joined_data$music_training <- as.integer(joined_data$music_training)
 
-#write_csv(joined_data, "tidied_data/music_training_plus2s.csv")
+write_csv(joined_data, "tidied_data/music_training_plus2s.csv")
 
 # Descriptives
 tidy_data_filtered %>%
