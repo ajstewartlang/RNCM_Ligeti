@@ -1,18 +1,17 @@
 library(tidyverse)
-library(janitor)
 library(readxl)
 
 raw_data <- read_excel("raw_data/raw_data.xlsx") 
 
 raw_data <- raw_data %>% 
-  select(randomId, musicTraining, c("...37":"...58")) 
+  select(randomId, musicTraining, post_familiar, c("...37":"...58")) 
 
 names_list <- NULL
 for (i in 1:21) {
   names_list <- c(names_list, paste0("point_",i))
 }
 
-colnames(raw_data) <- c("ID", "music_training", "start", names_list)
+colnames(raw_data) <- c("ID", "music_training", "post_familiar", "start", names_list)
 
 # exclude anyone where we don't have their music training score
 raw_data <- raw_data %>%
@@ -36,10 +35,11 @@ tidy_data_filtered <- tidy_data %>%
   mutate(time = as.integer(as.integer(value)/1000)) %>%
   filter(time < 5e+02)
 
-# Plot histogram 
+# Plot first histogram 
 tidy_data_filtered %>%
+  filter(time < 213) %>%
   ggplot(aes(x = time)) +
-  geom_histogram(bins = 200) +
+  geom_histogram(bins = 213) +
   labs(title = "Number of button presses throughout the duration of the piece",
        x = "Time (s)", 
        y = "Number of presses") +
@@ -51,34 +51,49 @@ tidy_data_filtered %>%
 tidy_data$music_training <- as.integer(tidy_data$music_training)
 tidy_data_filtered$music_training <- as.integer(tidy_data_filtered$music_training)
 
+# rename post_familiar as unfamiliar if 1,2,3 and familiar if 5,6,7
 tidy_data_filtered %>%
-  mutate(time = as.integer(value)/1000) %>%
-  ggplot(aes(x = time, y = reorder(ID, music_training), colour = music_training)) +
-  geom_point(alpha = .2, size = 5) +
-  theme(axis.text.y = element_blank()) +
-  labs(x = "Time", y = NULL) +
-  guides(colour = FALSE) +
-  geom_vline(xintercept = 7.11, alpha = .75) +
-  geom_vline(xintercept = 13.98) +
-  geom_vline(xintercept = 15.7) +
-  geom_vline(xintercept = 22.87) +
-  geom_vline(xintercept = 23.855) +
-  geom_vline(xintercept = 24.52) +
-  geom_vline(xintercept = 33.385) +
-  geom_vline(xintercept = 39.05) +
-  geom_vline(xintercept = 47.585) +
-  geom_vline(xintercept = 55.675) +
-  geom_vline(xintercept = 65.295) +
-  geom_vline(xintercept = 76.51) +
-  geom_vline(xintercept = 88.485) +
-  geom_vline(xintercept = 97.005) +
-  geom_vline(xintercept = 114.915) +
-  geom_vline(xintercept = 116.445) +
-  geom_vline(xintercept = 123.73) +
-  geom_vline(xintercept = 130.925) +
-  geom_vline(xintercept = 142.17) +
-  geom_vline(xintercept = 170.375) +
-  geom_vline(xintercept = 177.665) 
+  filter(!is.na(post_familiar)) %>%
+  mutate(post_familiar = as.integer(post_familiar)) %>%
+  mutate(post_familiar = as_factor(ifelse(post_familiar < 4, "not_familiar", "familiar"))) %>%
+  filter(time < 213) %>%
+  group_by(post_familiar, time) %>%
+  count() %>%
+  arrange(-n)
+
+# Plot button press for people not familiar with contemporary music
+tidy_data_filtered %>%
+  filter(!is.na(post_familiar)) %>%
+  mutate(post_familiar = as.integer(post_familiar)) %>%
+  mutate(post_familiar = as_factor(ifelse(post_familiar < 4, "not_familiar", "familiar"))) %>%
+  filter(time < 213) %>%
+  filter(post_familiar == "not_familiar") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram(bins = 213) +
+  labs(title = "Button presses throughout the duration of the piece\nfor people not familiar with contemporary music",
+       x = "Time (s)", 
+       y = "Number of presses") +
+  theme_minimal() +
+  theme(text = element_text(size = 15)) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_y_continuous(expand = c(0, 0)) 
+
+# Plot button press for people  familiar with contemporary music
+tidy_data_filtered %>%
+  filter(!is.na(post_familiar)) %>%
+  mutate(post_familiar = as.integer(post_familiar)) %>%
+  mutate(post_familiar = as_factor(ifelse(post_familiar < 4, "not_familiar", "familiar"))) %>%
+  filter(time < 213) %>%
+  filter(post_familiar == "familiar") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram(bins = 213) +
+  labs(title = "Button presses throughout the duration of the piece\nfor people familiar with contemporary music",
+       x = "Time (s)", 
+       y = "Number of presses") +
+  theme_minimal() +
+  theme(text = element_text(size = 15)) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_y_continuous(expand = c(0, 0)) 
 
 # create long data frame based on 9 segments
 ID <- unique(tidy_data_filtered$ID)
@@ -94,10 +109,10 @@ my_df <- expand_grid(ID, seg)
 music_data <- tidy_data_filtered %>%
   select(c(ID, music_training)) %>%
   distinct(ID, .keep_all = TRUE)
-
+  
 my_df <- left_join(my_df, music_data , by = "ID")
 
-# name segments so the are of the range segment change +- 1 second
+# name segments so the are of the range segment change +2 second
 
 tidy_data_filtered$seg <- "0"
 tidy_data_filtered[tidy_data_filtered$time > 7.10 & tidy_data_filtered$time < 9.12,]$seg <- "Seg1"
@@ -138,4 +153,36 @@ joined_data <- left_join(my_df, select(tidy_data_filtered,
 joined_data[is.na(joined_data$press),]$press <- 0
 joined_data$music_training <- as.integer(joined_data$music_training)
 
-write_csv(joined_data, "tidied_data/music_training_plus2s.csv")
+#write_csv(joined_data, "tidied_data/music_training_plus2s.csv")
+
+# Descriptives
+tidy_data_filtered %>%
+  filter(seg != 0) %>%
+  group_by(seg) %>%
+  tally(press) %>%
+  arrange(-n) %>%
+  top_n(10)
+  
+# By segment bar plot
+joined_data %>%
+  group_by(seg, press) %>%
+  count() %>%
+  filter(press == 1) %>%
+  ungroup() %>%
+  add_row(seg = "Seg1", press = 1, n = 0) %>%
+  add_row(seg = "Seg2", press = 1, n = 0) %>%
+  add_row(seg = "Seg4", press = 1, n = 0) %>%
+  add_row(seg = "Seg17", press = 1, n = 0) %>%
+  mutate(seg, seg = factor(seg, levels = c("Seg1", "Seg2", "Seg3", "Seg4", "Seg5", "Seg6", "Seg7", "Seg8", "Seg9",
+                                      "Seg10", "Seg11", "Seg12", "Seg13", "Seg14", "Seg15", "Seg16", "Seg17",
+                                      "Seg18", "Seg19", "Seg20", "Seg21"))) %>%
+  ggplot(aes(x = seg, y = n)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(text = element_text(size = 15)) +
+  labs(title = "Clicks per segment",
+       x = "Segment Number", 
+       y = "Number of Clicks")
+
+
