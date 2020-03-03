@@ -77,7 +77,7 @@ tidy_data_filtered %>%
   scale_x_continuous(expand = c(0, 0)) + 
   scale_y_continuous(expand = c(0, 0)) 
 
-# Plot button press for people  familiar with contemporary music
+# Plot button press for people familiar with contemporary music
 tidy_data_filtered %>%
   filter(!is.na(post_familiar)) %>%
   mutate(post_familiar = as.integer(post_familiar)) %>%
