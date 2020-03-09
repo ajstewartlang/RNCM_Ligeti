@@ -1,0 +1,214 @@
+---
+title: "Events A-D"
+author: "Andrew Stewart"
+date: "04/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+```{r, message = FALSE}
+tidy_data_filtered <- read_csv("tidy_data_filtered.csv")
+```
+
+```{r}
+ID <- unique(tidy_data_filtered$ID)
+
+seg <- c("Seg1", "Seg2", "Seg3", "Seg4", "Seg5", "Seg6", "Seg7", "Seg8", "Seg9",
+         "Seg10", "EventA", "EventB", "EventC", "EventD", "Seg15", "Seg16", "Seg17",
+         "Seg18", "Seg19", "Seg20", "EventE")
+
+my_df <- expand_grid(ID, seg)
+
+#my_df$press <- NA
+
+music_data <- tidy_data_filtered %>%
+  select(c(ID, music_training)) %>%
+  distinct(ID, .keep_all = TRUE)
+
+my_df <- left_join(my_df, music_data , by = "ID")
+
+# set seg column to zero
+
+tidy_data_filtered$seg <- "0"
+```
+
+For each of the events, I have plotted the histogram of clicks over time for the Event. I have also fitted the data to a gamma shaped distribution and plotted the fit. For each event, you can see the estimated parameters of the associated gamma distribution. Note that there is quite a variation both in terms of fit and in terms of parameter estimation. 
+
+## Event A
+```{r}
+Event_A <- tidy_data_filtered
+Event_A[Event_A$time > 65.285 & Event_A$time < 71.286,]$seg <- "EventA"
+Event_A$press <- 1
+
+Event_A_joined_data <- left_join(my_df, select(Event_A, 
+                                       c("ID", "seg", "time", "press")), by = c("ID", "seg")) 
+
+Event_A_joined_data <- Event_A_joined_data %>%
+  filter(seg == "EventA") %>%
+  mutate(press = replace_na(press, 0))
+
+Event_A %>%
+  filter(seg == "EventA") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram() +
+  labs(title = "Event A Presses",
+       x = "Time (s)",
+       y = "Button press") +
+  theme_minimal()
+```
+
+Let's check the fit with the Gamma distribution and extract paaramenters using methods of moments estimation.
+
+```{r}
+plot(fitdistrplus::fitdist(filter(Event_A_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+summary(fitdistrplus::fitdist(filter(Event_A_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+```
+
+## Event B
+
+```{r}
+Event_B <- tidy_data_filtered
+Event_B[Event_B$time > 76.5 & Event_B$time < 82.51,]$seg <- "EventB"
+Event_B$press <- 1
+
+Event_B_joined_data <- left_join(my_df, select(Event_B, 
+                                               c("ID", "seg", "time", "press")), by = c("ID", "seg")) 
+
+Event_B_joined_data <- Event_B_joined_data %>%
+  filter(seg == "EventB") %>%
+  mutate(press = replace_na(press, 0))
+
+Event_B %>%
+  filter(seg == "EventB") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram() +
+  labs(title = "Event B Presses",
+       x = "Time (s)",
+       y = "Button press") +
+  theme_minimal()
+```
+
+Let's check the fit with the Gamma distribution and extract paaramenters using methods of moments estimation.
+
+```{r}
+plot(fitdistrplus::fitdist(filter(Event_B_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+summary(fitdistrplus::fitdist(filter(Event_B_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+```
+
+## Event C
+
+```{r}
+Event_C <- tidy_data_filtered
+Event_C[Event_C$time > 88.475 & Event_C$time < 94.476,]$seg <- "EventC"
+
+Event_C$press <- 1
+
+Event_C_joined_data <- left_join(my_df, select(Event_C, 
+                                               c("ID", "seg", "time", "press")), by = c("ID", "seg")) 
+
+Event_C_joined_data <- Event_C_joined_data %>%
+  filter(seg == "EventC") %>%
+  mutate(press = replace_na(press, 0))
+
+Event_C %>%
+  filter(seg == "EventC") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram() +
+  labs(title = "Event C Presses",
+       x = "Time (s)",
+       y = "Button press") +
+  theme_minimal()
+
+```
+
+Let's check the fit with the Gamma distribution and extract paaramenters using methods of moments estimation.
+
+```{r}
+plot(fitdistrplus::fitdist(filter(Event_C_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+summary(fitdistrplus::fitdist(filter(Event_C_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+```
+
+## Event D
+
+```{r}
+Event_D <- tidy_data_filtered
+Event_D[Event_D$time > 96.995 & Event_D$time < 102.996,]$seg <- "EventD"
+
+Event_D$press <- 1
+
+Event_D_joined_data <- left_join(my_df, select(Event_D, 
+                                               c("ID", "seg", "time", "press")), by = c("ID", "seg")) 
+
+Event_D_joined_data <- Event_D_joined_data %>%
+  filter(seg == "EventD") %>%
+  mutate(press = replace_na(press, 0))
+
+Event_D %>%
+  filter(seg == "EventD") %>%
+  ggplot(aes(x = time)) +
+  geom_histogram() +
+  labs(title = "Event D Presses",
+       x = "Time (s)",
+       y = "Button press") +
+  theme_minimal()
+```
+
+Let's check the fit with the Gamma distribution and extract paaramenters using methods of moments estimation.
+
+```{r}
+plot(fitdistrplus::fitdist(filter(Event_D_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+summary(fitdistrplus::fitdist(filter(Event_D_joined_data, !is.na(time))$time, "gamma", method = "mme"), las = 1) 
+```
+
+Let's work out the top quartile of responders for each of the Events A-D and examine whether the same participants are in the top quartile for each of the 4 events.
+
+```{r}
+
+
+Event_A_top_quartile <- Event_A_joined_data %>%
+  filter(press == 1) %>%
+  arrange(time) %>%
+  top_frac(-.25, wt = time) %>%
+  pull(ID) %>%
+  cbind("A")
+
+Event_B_top_quartile <- Event_B_joined_data %>%
+  filter(press == 1) %>%
+  arrange(time) %>%
+  top_frac(-.25, wt = time) %>%
+  pull(ID) %>%
+  cbind("B")
+
+Event_C_top_quartile <- Event_C_joined_data %>%
+  filter(press == 1) %>%
+  arrange(time) %>%
+  top_frac(-.25, wt = time) %>%
+  pull(ID) %>%
+  cbind("C")
+
+Event_D_top_quartile <- Event_D_joined_data %>%
+  filter(press == 1) %>%
+  arrange(time) %>%
+  top_frac(-.25, wt = time) %>%
+  pull(ID) %>%
+  cbind("D")
+
+rbind(Event_A_top_quartile, 
+  Event_B_top_quartile,
+  Event_C_top_quartile,
+  Event_D_top_quartile) %>%
+  as_tibble(.name_repair = "minimal") %>%
+  cbind(press = "1") %>%
+  spread(key = Var.2, value = press) %>%
+  mutate_all(funs(ifelse(is.na(.), 0, .))) %>%
+  set_names("Participant", "Event_A_press", "Event_B_press", "Event_C_press", "Event_D_press")
+```
+
+As we can see, most participants appear onlyin the top quartile for only one event - it's not the case that the same people tend to respond quickly at each of the Event boundaries.
